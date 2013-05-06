@@ -3,6 +3,7 @@ package com.android.tecla.keyboard;
 import com.android.inputmethod.keyboard.KeyboardSwitcher;
 import android.content.Intent;
 import com.android.inputmethod.keyboard.KeyboardView;
+import com.android.inputmethod.latin.LatinIME;
 
 import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
@@ -27,6 +28,8 @@ public class TeclaIME extends InputMethodService {
 						mHandler.sendMessageDelayed(msg, 250);
 					}
 				} else {
+					LatinIME ime = (LatinIME)TeclaApp.ime;
+					WordPredictionAdapter.setSuggestionsView(ime.mSuggestionsView);
 				}
 			}
 			super.handleMessage(msg);
@@ -76,6 +79,13 @@ public class TeclaIME extends InputMethodService {
 				new KeyEvent(KeyEvent.ACTION_DOWN, keyEventCode));
 		getCurrentInputConnection().sendKeyEvent(
 				new KeyEvent(KeyEvent.ACTION_UP, keyEventCode));
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		IMEAdapter.selectScanHighlighted();
+		return true;
 	}	
 
+	
 }

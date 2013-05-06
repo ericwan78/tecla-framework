@@ -1,5 +1,7 @@
 package com.android.tecla.keyboard;
 
+import com.android.inputmethod.latin.suggestions.SuggestionsView;
+
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -12,10 +14,15 @@ public class WordPredictionAdapter {
 	private static final int BACKGROUND_NORMAL_COLOR = Color.DKGRAY;
 	public static final String tag = "WordPredictionAdapter";
 	
-	public static ViewGroup sSuggestionsViewGroup = null;
-	
+	private static ViewGroup sSuggestionsViewGroup = null;
+	private static SuggestionsView sSuggestionsView = null;
+
 	public static void setSuggestionsViewGroup(ViewGroup vg) {
 		sSuggestionsViewGroup = vg;
+	}
+	
+	public static void setSuggestionsView(SuggestionsView sv) {
+		sSuggestionsView = sv;
 	}
 	
 	public static boolean selectHighlighted() {
@@ -127,7 +134,10 @@ public class WordPredictionAdapter {
 											invalidateKeys();
 											sState = WPSCAN_NONE;
 											View view = sSuggestionsViewGroup.getChildAt(SUGGESTIONSVIEWINDICES[sCurrentIndex]);
-											view.callOnClick();
+											//view.callOnClick();
+											sSuggestionsView.onLongClick(view);
+											sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[6].onPressed();
+											sSuggestionsView.mMoreSuggestionsView.invalidateAllKeys();
 											break;
 			default:						break;
 			}
