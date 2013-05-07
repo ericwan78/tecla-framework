@@ -102,6 +102,15 @@ public class WordPredictionAdapter {
 											}
 											highlightSuggestion(sCurrentIndex, true);
 											break;
+			case(WPSCAN_MORESUGGESTIONS):	if(sCurrentIndex < 18)
+												sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[sCurrentIndex].onReleased();
+											else
+												sCurrentIndex = 2;
+											++sCurrentIndex;
+											if(sCurrentIndex < 18)
+												sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[sCurrentIndex].onPressed();
+											sSuggestionsView.mMoreSuggestionsView.invalidateAllKeys();
+											break;
 			case(WPSCAN_CLICK):		highlightSuggestion(sCurrentIndex, false);
 									sState = WPSCAN_NONE;
 									break;
@@ -141,14 +150,28 @@ public class WordPredictionAdapter {
 											highlightSuggestion(sCurrentIndex, true);
 											invalidateKeys();
 											break;
-			case(WPSCAN_SUGGESTIONS):		highlightSuggestion(sCurrentIndex, false);
+			case(WPSCAN_SUGGESTIONS):		if(sCurrentIndex == SUGGESTIONSVIEWINDICES.length) {
+												highlightSuggestion(0, false);
+												highlightSuggestion(1, false);
+												highlightSuggestion(2, false);
+												sSuggestionsView.onLongClick(null);
+												sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[sCurrentIndex].onPressed();
+												sSuggestionsView.mMoreSuggestionsView.invalidateAllKeys();
+												sState = WPSCAN_MORESUGGESTIONS;
+											} else {
+												highlightSuggestion(sCurrentIndex, false);
+												View view = sSuggestionsViewGroup.getChildAt(SUGGESTIONSVIEWINDICES[sCurrentIndex]);
+												view.callOnClick();
+												sState = WPSCAN_NONE;												
+											}
 											invalidateKeys();
+											break;
+			case(WPSCAN_MORESUGGESTIONS):	if(sCurrentIndex < 18) {
+												sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[sCurrentIndex].onReleased();
+												sSuggestionsView.mMoreSuggestionsView.invalidateAllKeys();
+												// select word here
+											}
 											sState = WPSCAN_NONE;
-											View view = sSuggestionsViewGroup.getChildAt(SUGGESTIONSVIEWINDICES[sCurrentIndex]);
-											//view.callOnClick();
-											sSuggestionsView.onLongClick(view);
-											sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[6].onPressed();
-											sSuggestionsView.mMoreSuggestionsView.invalidateAllKeys();
 											break;
 			default:						break;
 			}
