@@ -52,7 +52,7 @@ public class IMEAdapter {
 		return true;
 	}
 	
-	private static Key[] sortKeys(Key[] keys) {
+	protected static Key[] sortKeys(Key[] keys) {
 		Key[] sorted_keys = keys.clone();
 		
 		// sort rows

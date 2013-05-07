@@ -1,5 +1,6 @@
 package com.android.tecla.keyboard;
 
+import com.android.inputmethod.keyboard.Key;
 import com.android.inputmethod.latin.suggestions.SuggestionsView;
 
 import android.graphics.Color;
@@ -16,6 +17,7 @@ public class WordPredictionAdapter {
 	
 	private static ViewGroup sSuggestionsViewGroup = null;
 	private static SuggestionsView sSuggestionsView = null;
+	private static Key[] sWordPredictionKeys = null;
 
 	public static void setSuggestionsViewGroup(ViewGroup vg) {
 		sSuggestionsViewGroup = vg;
@@ -102,13 +104,15 @@ public class WordPredictionAdapter {
 											}
 											highlightSuggestion(sCurrentIndex, true);
 											break;
-			case(WPSCAN_MORESUGGESTIONS):	if(sCurrentIndex < 18)
-												sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[sCurrentIndex].onReleased();
-											else
-												sCurrentIndex = 2;
+			case(WPSCAN_MORESUGGESTIONS):	if(sCurrentIndex < sWordPredictionKeys.length)
+												sWordPredictionKeys[sCurrentIndex].onReleased();
 											++sCurrentIndex;
-											if(sCurrentIndex < 18)
-												sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[sCurrentIndex].onPressed();
+											sCurrentIndex %= sWordPredictionKeys.length + 1;
+											if(sCurrentIndex < sWordPredictionKeys.length) {
+												if(!sWordPredictionKeys[sCurrentIndex].isEnabled())
+													++sCurrentIndex;
+												sWordPredictionKeys[sCurrentIndex].onPressed();
+											}
 											sSuggestionsView.mMoreSuggestionsView.invalidateAllKeys();
 											break;
 			case(WPSCAN_CLICK):		highlightSuggestion(sCurrentIndex, false);
@@ -155,19 +159,21 @@ public class WordPredictionAdapter {
 												highlightSuggestion(1, false);
 												highlightSuggestion(2, false);
 												sSuggestionsView.onLongClick(null);
-												sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[sCurrentIndex].onPressed();
+												sCurrentIndex = 0;
+												sWordPredictionKeys = IMEAdapter.sortKeys(sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys);
+												sWordPredictionKeys[sCurrentIndex].onPressed();
 												sSuggestionsView.mMoreSuggestionsView.invalidateAllKeys();
 												sState = WPSCAN_MORESUGGESTIONS;
 											} else {
 												highlightSuggestion(sCurrentIndex, false);
 												View view = sSuggestionsViewGroup.getChildAt(SUGGESTIONSVIEWINDICES[sCurrentIndex]);
 												view.callOnClick();
-												sState = WPSCAN_NONE;												
+												sState = WPSCAN_NONE;										
 											}
 											invalidateKeys();
 											break;
 			case(WPSCAN_MORESUGGESTIONS):	if(sCurrentIndex < 18) {
-												sSuggestionsView.mMoreSuggestionsView.getKeyboard().mKeys[sCurrentIndex].onReleased();
+												sWordPredictionKeys[sCurrentIndex].onReleased();
 												sSuggestionsView.mMoreSuggestionsView.invalidateAllKeys();
 												// select word here
 											}

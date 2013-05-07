@@ -28,8 +28,6 @@ public class TeclaIME extends InputMethodService {
 						mHandler.sendMessageDelayed(msg, 250);
 					}
 				} else {
-					LatinIME ime = (LatinIME)TeclaApp.ime;
-					WordPredictionAdapter.setSuggestionsView(ime.mSuggestionsView);
 				}
 			}
 			super.handleMessage(msg);
@@ -51,6 +49,9 @@ public class TeclaIME extends InputMethodService {
 		mHandler.sendMessageDelayed(msg, 250);
 		super.onStartInputView(info, restarting);
 		TeclaApp.persistence.setIMEShowing(true);
+		
+		LatinIME ime = (LatinIME)TeclaApp.ime;
+		WordPredictionAdapter.setSuggestionsView(ime.mSuggestionsView);
 	}
 
 	@Override
