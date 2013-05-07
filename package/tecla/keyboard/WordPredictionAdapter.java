@@ -17,51 +17,42 @@ public class WordPredictionAdapter {
 	private static final int BACKGROUND_NORMAL_COLOR = Color.DKGRAY;
 	public static final String tag = "WordPredictionAdapter";
 	
-	private static ViewGroup sSuggestionsViewGroup = null;
 	private static SuggestionsView sSuggestionsView = null;
 	private static Key[] sWordPredictionKeys = null;
 
-	public static void setSuggestionsViewGroup(ViewGroup vg) {
-		sSuggestionsViewGroup = vg;
-	}
-	
 	public static void setSuggestionsView(SuggestionsView sv) {
 		sSuggestionsView = sv;
 	}
 	
 	public static boolean selectHighlighted() {
-		if(sSuggestionsViewGroup == null) return false;
-		if(sSuggestionsViewGroup.getVisibility() != ViewGroup.VISIBLE) return false;
+		if(sSuggestionsView.mSuggestionsStrip == null) return false;
+		if(sSuggestionsView.mSuggestionsStrip.getVisibility() != ViewGroup.VISIBLE) return false;
 		WordPredictionStates.click();
 		return WordPredictionStates.sState != WordPredictionStates.WPSCAN_NONE;
 	}
 
 	public static boolean highlightNext() {
-		if(sSuggestionsViewGroup == null) return false;
-		if(sSuggestionsViewGroup.getVisibility() != ViewGroup.VISIBLE) return false;
+		if(sSuggestionsView.mSuggestionsStrip == null) return false;
+		if(sSuggestionsView.mSuggestionsStrip.getVisibility() != ViewGroup.VISIBLE) return false;
 		WordPredictionStates.scanNext();
 		if(WordPredictionStates.sState == WordPredictionStates.WPSCAN_NONE) return false;
 		else return true;
 	}
 
 	public static void highlightPrevious() {
-		if(sSuggestionsViewGroup == null) return;
-		if(sSuggestionsViewGroup.getVisibility() != ViewGroup.VISIBLE) return;
+		if(sSuggestionsView.mSuggestionsStrip  == null) return;
+		if(sSuggestionsView.mSuggestionsStrip.getVisibility() != ViewGroup.VISIBLE) return;
 		WordPredictionStates.scanPrevious();
 	}
 	
 	private static void highlightSuggestion(int index, boolean highlight) {
 		if(index < 0 || index >= SUGGESTIONSVIEWINDICES.length) return;
-		View view = sSuggestionsViewGroup.getChildAt(SUGGESTIONSVIEWINDICES[index]);
+		View view = sSuggestionsView.mSuggestionsStrip.getChildAt(SUGGESTIONSVIEWINDICES[index]);
 		if(highlight) {
 			view.setBackgroundColor(BACKGROUND_HIGHLIGHT_COLOR);
 		} else {
 			view.setBackgroundColor(BACKGROUND_NORMAL_COLOR);
 		}
-	}
-	
-	private static void invalidateKeys() {
-		sSuggestionsViewGroup.invalidate();
 	}
 	
 	private static class WordPredictionStates {
@@ -122,7 +113,7 @@ public class WordPredictionAdapter {
 									break;
 			default:				break;
 			}
-			invalidateKeys();
+			sSuggestionsView.mSuggestionsStrip.invalidate();
 		}
 		
 		private static void scanPrevious() {
@@ -154,7 +145,7 @@ public class WordPredictionAdapter {
 											sState = WPSCAN_SUGGESTIONS;
 											sCurrentIndex = 0;
 											highlightSuggestion(sCurrentIndex, true);
-											invalidateKeys();
+											sSuggestionsView.mSuggestionsStrip.invalidate();
 											break;
 			case(WPSCAN_SUGGESTIONS):		if(sCurrentIndex == SUGGESTIONSVIEWINDICES.length) {
 												highlightSuggestion(0, false);
@@ -168,11 +159,11 @@ public class WordPredictionAdapter {
 												sState = WPSCAN_MORESUGGESTIONS;
 											} else {
 												highlightSuggestion(sCurrentIndex, false);
-												View view = sSuggestionsViewGroup.getChildAt(SUGGESTIONSVIEWINDICES[sCurrentIndex]);
+												View view = sSuggestionsView.mSuggestionsStrip.getChildAt(SUGGESTIONSVIEWINDICES[sCurrentIndex]);
 												view.callOnClick();
 												sState = WPSCAN_NONE;										
 											}
-											invalidateKeys();
+											sSuggestionsView.mSuggestionsStrip.invalidate();
 											break;
 			case(WPSCAN_MORESUGGESTIONS):	if(sCurrentIndex < sWordPredictionKeys.length) {
 												sWordPredictionKeys[sCurrentIndex].onReleased();
