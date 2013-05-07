@@ -7,6 +7,7 @@ import com.android.inputmethod.latin.LatinIME;
 
 import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.os.Message;
 import android.view.inputmethod.EditorInfo;
@@ -85,6 +86,7 @@ public class TeclaIME extends InputMethodService {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		IMEAdapter.selectScanHighlighted();
+		Log.d("IME", "WAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		return true;
 	}	
 

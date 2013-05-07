@@ -4,7 +4,9 @@ import com.android.inputmethod.keyboard.Key;
 import com.android.inputmethod.latin.suggestions.SuggestionsView;
 
 import android.graphics.Color;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -172,10 +174,21 @@ public class WordPredictionAdapter {
 											}
 											invalidateKeys();
 											break;
-			case(WPSCAN_MORESUGGESTIONS):	if(sCurrentIndex < 18) {
+			case(WPSCAN_MORESUGGESTIONS):	if(sCurrentIndex < sWordPredictionKeys.length) {
 												sWordPredictionKeys[sCurrentIndex].onReleased();
 												sSuggestionsView.mMoreSuggestionsView.invalidateAllKeys();
-												// select word here
+
+												// simulate key press to select word
+												final int x = sWordPredictionKeys[sCurrentIndex].mHitBox.centerX();
+										        final int y = sWordPredictionKeys[sCurrentIndex].mHitBox.centerY();
+										        final long downTime = SystemClock.uptimeMillis();
+										        final MotionEvent downEvent = MotionEvent.obtain(
+										                downTime, downTime, MotionEvent.ACTION_DOWN, x, y, 0);
+										        final MotionEvent upEvent = MotionEvent.obtain(
+										                downTime, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, x, y, 0);
+
+										        sSuggestionsView.mMoreSuggestionsView.onTouchEvent(downEvent);
+										        sSuggestionsView.mMoreSuggestionsView.onTouchEvent(upEvent);
 											}
 											sState = WPSCAN_NONE;
 											break;
