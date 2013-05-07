@@ -87,8 +87,19 @@ public class WordPredictionAdapter {
 											highlightSuggestion(2, false);
 											sState = WPSCAN_NONE;
 											break;
-			case(WPSCAN_SUGGESTIONS):		highlightSuggestion(sCurrentIndex++, false);
-											sCurrentIndex %= SUGGESTIONSVIEWINDICES.length + 1;
+			case(WPSCAN_SUGGESTIONS):		if(sCurrentIndex == SUGGESTIONSVIEWINDICES.length) {
+												highlightSuggestion(0, false);
+												highlightSuggestion(1, false);
+												highlightSuggestion(2, false);
+											}
+											highlightSuggestion(sCurrentIndex++, false);
+											sCurrentIndex %= SUGGESTIONSVIEWINDICES.length + 2;
+											if(sCurrentIndex == SUGGESTIONSVIEWINDICES.length) {
+												highlightSuggestion(0, true);
+												highlightSuggestion(1, true);
+												highlightSuggestion(2, true);
+												break;
+											}
 											highlightSuggestion(sCurrentIndex, true);
 											break;
 			case(WPSCAN_CLICK):		highlightSuggestion(sCurrentIndex, false);
