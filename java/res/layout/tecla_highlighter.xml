@@ -14,4 +14,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <ca.idrc.tecla.highlighter.HighlightBoundsView
+        android:id="@+id/otherBounds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
+
 </RelativeLayout>

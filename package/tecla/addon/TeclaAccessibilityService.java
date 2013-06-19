@@ -153,7 +153,7 @@ public class TeclaAccessibilityService extends AccessibilityService {
 		if (mActiveNodes.size() > 0 ) {
 			mSelectedNode = findNeighbourNode(mSelectedNode, DIRECTION_ANY);
 			if(mSelectedNode == null) mSelectedNode = mActiveNodes.get(0);
-			TeclaHighlighter.highlightNode(mSelectedNode);
+			TeclaHighlighter.highlightNode(mSelectedNode, mActiveNodes);
 			mSelectedNode.performAction(AccessibilityNodeInfo.ACTION_FOCUS);
 			if(mPreviousOriginalNode != null) mPreviousOriginalNode.recycle();
 		}
@@ -174,7 +174,7 @@ public class TeclaAccessibilityService extends AccessibilityService {
 			}
 			for (int i=0; i<thisnode.getChildCount(); ++i) q.add(thisnode.getChild(i));
 		}
-		removeActiveParents();
+		//removeActiveParents();
 	}
 	
 	private void removeActiveParents() {
@@ -452,7 +452,7 @@ public class TeclaAccessibilityService extends AccessibilityService {
 			}
 			mActionLock.unlock(); 
 
-			TeclaHighlighter.highlightNode(sInstance.mSelectedNode);
+			TeclaHighlighter.highlightNode(sInstance.mSelectedNode, sInstance.mActiveNodes);
 			sInstance.mSelectedNode.performAction(AccessibilityNodeInfo.ACTION_FOCUS);
 		}
 	}

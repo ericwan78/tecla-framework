@@ -1,5 +1,7 @@
 package com.android.tecla.addon;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -50,8 +52,8 @@ public class TeclaVisualOverlay {
 		hide();
 	}
 
-	public void highlightNode(AccessibilityNodeInfo selectedNode) {
-		mHighlighter.highlightNode(selectedNode);	
+	public void highlightNode(AccessibilityNodeInfo selectedNode, ArrayList<AccessibilityNodeInfo> activeNodes) {
+		mHighlighter.highlightNode(selectedNode, activeNodes);	
 	}
 	
 	public void clearHighlight() {

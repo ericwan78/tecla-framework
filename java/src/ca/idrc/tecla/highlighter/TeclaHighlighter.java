@@ -1,9 +1,13 @@
 package ca.idrc.tecla.highlighter;
 
+import java.util.ArrayList;
+
 import ca.idrc.tecla.R;
 import ca.idrc.tecla.framework.SimpleOverlay;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -13,6 +17,9 @@ public class TeclaHighlighter extends SimpleOverlay {
 
     private final HighlightBoundsView mInnerBounds;
     private final HighlightBoundsView mOuterBounds;
+    private final HighlightBoundsView mOtherBounds;
+    
+    private ArrayList<AccessibilityNodeInfo> mNodes;
     
 	public TeclaHighlighter(Context context) {
 		super(context);
@@ -33,8 +40,14 @@ public class TeclaHighlighter extends SimpleOverlay {
 		
 		mOuterBounds = (HighlightBoundsView) findViewById(R.id.bounds);
 		mOuterBounds.setHighlightColor(Color.argb(0xdd, 0x38, 0x38, 0x38));
+
+		
+		mOtherBounds = (HighlightBoundsView) findViewById(R.id.otherBounds);
+		mOtherBounds.setHighlightColor(Color.argb(0xdd, 0x38, 0x38, 0x38));
+		
 	}
 
+	
 	@Override
 	protected void onShow() {
 		sInstance = this;
@@ -64,7 +77,7 @@ public class TeclaHighlighter extends SimpleOverlay {
         mInnerBounds.postInvalidate();
     }
 
-    public static void highlightNode(AccessibilityNodeInfo node) {
+    public static void highlightNode(AccessibilityNodeInfo node, ArrayList<AccessibilityNodeInfo> otherNodes) {
         if (sInstance == null) {
             return;
         }
@@ -79,6 +92,35 @@ public class TeclaHighlighter extends SimpleOverlay {
             sInstance.mInnerBounds.postInvalidate();
         	
         }
+        
+        sInstance.h.removeMessages(0);
+        sInstance.mNodes = otherNodes;
+        
+        Message msg = new Message();
+        msg.what=0;
+        sInstance.h.sendMessage(msg);
+        
+        
     }
+    
+    private Handler h = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			
+			AccessibilityNodeInfo node = mNodes.remove(0);
+			mOtherBounds.clear();
+			mOtherBounds.setStrokeWidth(4);
+			mOtherBounds.add(node);
+            mOtherBounds.postInvalidate();			
+			mNodes.add(node);
+			mInnerBounds.postInvalidate();
+			super.handleMessage(msg);
+			Message msg1 = new Message();
+			msg1.what=0;
+			h.sendMessageDelayed(msg1, 500);
+		}
+    	
+    };
     
 }
